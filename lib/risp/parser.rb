@@ -1,5 +1,4 @@
 require 'rltk/parser'
-require "risp/ast"
 
 module Risp
   class Parser < RLTK::Parser
@@ -12,11 +11,17 @@ module Risp
       clause('list') do |list|
         list
       end
+      clause('QUOTE expression') do |_, expr|
+        [Risp::Symbol.new(:quote), expr]
+      end
+      clause('UNQUOTE expression') do |_, expr|
+        [Risp::Symbol.new(:unquote), expr]
+      end
     end
 
     production(:list) do
       clause('LPAREN expressions RPAREN') do |_, elems, _|
-        Risp::AST::List.new(elems)
+        elems
       end
     end
 
@@ -25,34 +30,40 @@ module Risp
         l
       end
       clause('SYMBOL') do |name|
-        Risp::AST::Symbol.new(name)
+        Risp::Symbol.new(name.to_sym)
       end
       clause('DOT SYMBOL') do |_, name|
-        Risp::AST::MethodSymbol.new(name)
+        Risp::Method.new(name.to_sym)
       end
     end
 
     production(:literal) do
       clause('INTEGER') do |n|
-        Risp::AST::Literal.new(n.to_i)
+        n
       end
       clause('FLOAT') do |f|
-        Risp::AST::Literal.new(f.to_f)
+        f
       end
       clause('STRING') do |s|
-        Risp::AST::Literal.new(s)
+        s
+      end
+      clause('BOOLEAN') do |b|
+        b
+      end
+      clause('KEYWORD') do |k|
+        k[1..-1].to_sym
       end
       clause('LSQBRACK expressions RSQBRACK') do |_, exprs, _|
-        Risp::AST::VectorLiteral.new(exprs)
+        [Risp::Symbol.new(:quote), exprs]
       end
       clause('POUND LBRACE expressions RBRACE') do |_, _, exprs, _|
-        Risp::AST::SetLiteral.new(exprs)
+        [Risp::Symbol.new(:set)] + exprs
       end
       clause('LBRACE expressions RBRACE') do |_, keyvals, _|
-        Risp::AST::MapLiteral.new(keyvals)
+        [Risp::Symbol.new(:"hash-map")] + keyvals
       end
       clause('NIL') do |_|
-        Risp::AST::Literal.new(nil, NilClass)
+        nil
       end
     end
 
