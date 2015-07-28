@@ -27,6 +27,9 @@ module Risp
       clause('SYMBOL') do |name|
         Risp::AST::Symbol.new(name)
       end
+      clause('DOT SYMBOL') do |_, name|
+        Risp::AST::MethodSymbol.new(name)
+      end
     end
 
     production(:literal) do
@@ -56,4 +59,3 @@ module Risp
     finalize
   end
 end
-
