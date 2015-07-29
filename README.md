@@ -21,19 +21,50 @@ Or install it yourself as:
 
 ## Usage
 
+Instantiate an interpreter and evaluate code:
+
+```ruby
+risp = Risp::Interpreter.new
+
+risp.eval <<-CODE
+(def double [x]
+  (* 2 x))
+
+(double 5)
+CODE
+```
+
+The LISP syntax is very similar to Clojure:
+
 ```lisp
+; Define a function
 (defn dec [n]
   (- n 1))
 
+; Define recursive factorial
 (defn fact [n]
   (if (<= n 1)
     1
     (* n (fact (dec n)))))
 
-(fact 10)
+(fact 10) ; => 3628800
+
+; Rest argument
+(defn foo [a b &more]
+  [a b more])
+
+(foo 1 2 3 4 5) ; => [1 2 [3 4 5]]
+
+; Argument destructuring
+(defn swap-pairs [[a b] [c d]]
+  [[a c] [b d]])
+
+(swap-pairs [1 2] [3 4]) ; => [[1 3] [2 4]]
 ```
 
 ## Macro support
+
+Macros, quoting and unquoting are supported:
 
 ```lisp
 (defmacro defn- [name args body]

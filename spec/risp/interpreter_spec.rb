@@ -47,6 +47,14 @@ describe Risp::Interpreter do
         (unwrap 0 [1 [2 3]] 4 5)
       LISP
       expect(i.eval lisp).to eq([0, 1, 2, 3, [4, 5]])
+
+      lisp = <<-LISP
+        (defn swap-pairs [[a b] [c d]]
+          [[a c] [b d]])
+
+        (swap-pairs [1 2] [3 4])
+      LISP
+      expect(i.eval lisp).to eq(Hamster.from([[1, 3], [2, 4]]))
     end
 
     it 'interoperates with Ruby' do

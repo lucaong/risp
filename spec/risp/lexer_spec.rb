@@ -6,6 +6,7 @@ describe Risp::Lexer do
     <<-EOS
     (def x 2)
     (defn [y] (+ x y))
+    ; comments should be ignored
     (.foo bar)
     {123 23.45}
     \#{1 2}

@@ -7,6 +7,7 @@ describe Risp::Parser do
     <<-EOS
       (foo bar (baz 123 "xxx"))
       -42.5
+      ; comments should be ignored
       (map somefunction [1 2 3])
       (reduce somefunction {:x 0} [1 2 3])
       \#{a set of stuff}
