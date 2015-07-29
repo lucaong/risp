@@ -1,8 +1,7 @@
 # Risp
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/risp`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+`Risp` is a LISP implementation written in Ruby (because why not?). The syntax
+is reminescent of Clojure, and it support calling Ruby methods.
 
 ## Installation
 
@@ -22,7 +21,30 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```lisp
+(defn dec [n]
+  (- n 1))
+
+(defn fact [n]
+  (if (<= n 1)
+    1
+    (let [m (fact (dec n))]
+      (* n m))))
+
+(fact 10)
+```
+
+## Macro support
+
+```lisp
+(defmacro defn- [name args body]
+  '(def ~name (fn ~args ~body)))
+
+(defn- sum [a b]
+  (+ a b))
+
+(sum 4 5)
+```
 
 ## Development
 
