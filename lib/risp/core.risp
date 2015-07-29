@@ -10,36 +10,64 @@
              (.concat '(~(first f) ~a) (rest f)))))
 
 (defn + [&xs]
-  (.reduce xs :+))
+  (.reduce xs 0 :+))
 
-(defn - [&xs]
-  (.reduce xs :-))
+(defn - [x &xs]
+  (if (.empty? xs)
+    (- 0 x)
+    (.reduce xs x :-)))
 
 (defn * [&xs]
-  (.reduce xs :*))
+  (.reduce xs 1 :*))
 
-(defn / [&xs]
-  (.reduce xs :/))
+(defn / [x &xs]
+  (if (.empty? xs)
+    (/ 1 x)
+    (.reduce xs x :/)))
 
 (defn > [&xs]
-  (.all? (.each_cons xs 2) (fn [pair] (.> (.first pair) (.last pair)))))
+  (.all? (.each_cons xs 2) (fn [[a b]] (.> a b))))
 
 (defn >= [&xs]
-  (.all? (.each_cons xs 2) (fn [pair] (.>= (.first pair) (.last pair)))))
+  (.all? (.each_cons xs 2) (fn [[a b]] (.>= a b))))
 
 (defn < [&xs]
-  (.all? (.each_cons xs 2) (fn [pair] (.< (.first pair) (.last pair)))))
+  (.all? (.each_cons xs 2) (fn [[a b]] (.< a b))))
 
 (defn <= [&xs]
-  (.all? (.each_cons xs 2) (fn [pair] (.<= (.first pair) (.last pair)))))
+  (.all? (.each_cons xs 2) (fn [[a b]] (.<= a b))))
 
 (defn = [&xs]
-  (.all? (.each_cons xs 2) (fn [pair] (.== (.first pair) (.last pair)))))
+  (.all? (.each_cons xs 2) (fn [[a b]] (.== a b))))
+
+(defn compare [a b]
+  (.<=> a b))
+
+(defn vector [&xs]
+  (.new Hamster/Vector xs))
 
 (defn set [&xs]
-  (.new Set xs))
+  (.new Hamster/Set xs))
+
+(defn sorted-set [&xs]
+  (.new Hamster/SortedSet xs))
+
+(defn sorted-set-by [comparator &xs]
+  (.new Hamster/SortedSet xs comparator))
+
+(defn list [&xs]
+  (.new Hamster/List xs))
 
 (defn hash-map [&xs]
+  (.new Hamster/Hash (.each_slice xs 2)))
+
+(defn ruby-array [&xs]
+  (.new Array xs))
+
+(defn ruby-set [&xs]
+  (.new Set xs))
+
+(defn ruby-hash [&xs]
   (.to_h (.each_slice xs 2)))
 
 (defn filter [fn coll]
@@ -59,3 +87,6 @@
 
 (defn rest [coll]
   (drop 1 coll))
+
+(defn println [&xs]
+  (.puts (.new Object) (.join xs " ")))

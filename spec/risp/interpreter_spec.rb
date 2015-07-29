@@ -39,6 +39,16 @@ describe Risp::Interpreter do
       expect(i.eval lisp).to eq([0, 1, [2, 3]])
     end
 
+    it 'supports argument deconstruction' do
+      lisp = <<-LISP
+        (defn unwrap [first [a [b c]] &rest]
+          [first a b c rest])
+
+        (unwrap 0 [1 [2 3]] 4 5)
+      LISP
+      expect(i.eval lisp).to eq([0, 1, 2, 3, [4, 5]])
+    end
+
     it 'interoperates with Ruby' do
       expect(i.eval '(.first [1 2 3])').to eq(1)
       expect(i.eval '(.new Set [1 2 3])').to eq(Set.new([1, 2, 3]))

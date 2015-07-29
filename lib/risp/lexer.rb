@@ -3,8 +3,8 @@ require "rltk/lexer"
 module Risp
   class Lexer < RLTK::Lexer
     rule(/"[^"]*"/)    { |t| [:STRING, t[1...-1]] }
-    rule(/\d+\.\d+/)   { |t| [:FLOAT, t.to_f] }
-    rule(/\d+/)        { |t| [:INTEGER, t.to_i] }
+    rule(/-?\d+\.\d+/) { |t| [:FLOAT, t.to_f] }
+    rule(/-?\d+/)      { |t| [:INTEGER, t.to_i] }
     rule(/true|false/) { |b| [:BOOLEAN, b == 'true'] }
     rule(/nil|\(\)/)   { :NIL }
     rule(/\(/)         { :LPAREN }

@@ -57,7 +57,7 @@ module Risp
         k[1..-1].to_sym
       end
       clause('LSQBRACK expressions RSQBRACK') do |_, exprs, _|
-        [Risp::Symbol.new(:quote), exprs.map { |x| [Risp::Symbol.new(:unquote), x] }]
+        [Risp::Symbol.new(:vector)] + exprs
       end
       clause('POUND LBRACE expressions RBRACE') do |_, _, exprs, _|
         [Risp::Symbol.new(:set)] + exprs

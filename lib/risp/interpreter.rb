@@ -1,5 +1,6 @@
 require "risp/lexer"
 require "risp/parser"
+require "hamster"
 
 module Risp
   class Interpreter
@@ -11,16 +12,15 @@ module Risp
         binding[symbol.name] = eval(value, binding, locals, macros)
       },
       let: -> (elems, binding, locals, macros) {
-        (_, assigns), body = elems
-        locals = assigns.map(&:last).each_slice(2).reduce(locals.dup) do |locals, (s, v)|
+        (_, *assigns), body = elems
+        locals = assigns.each_slice(2).reduce(locals.dup) do |locals, (s, v)|
           locals[s.name] = eval(v, binding, locals, macros)
           locals
         end
         eval(body, binding, locals, macros)
       },
       fn: -> (elems, binding, locals, macros) {
-        (_, as), body = elems
-        as = as.map(&:last)
+        (_, *as), body = elems
         -> (*args) do
           locals = locals.merge(assign_args(as, args))
           eval(body, binding, locals, macros)
@@ -41,12 +41,15 @@ module Risp
         unquote(elems.first, binding, locals, macros)
       },
       defmacro: -> (elems, binding, locals, macros) {
-        symbol, (_, as), body = elems
-        as = as.map(&:last)
+        symbol, (_, *as), body = elems
         macros[symbol.name] = -> (*args) do
           locals = locals.merge(assign_args(as, args))
           eval(body, binding, locals, macros)
         end
+      },
+      apply: -> (elems, binding, locals, macros) {
+        fn, args = elems.map { |x| eval(x, binding, locals, macros) }
+        fn.call(*args)
       }
     }
 
@@ -110,10 +113,14 @@ module Risp
         locals[symbol]
       elsif binding.has_key?(symbol)
         binding[symbol]
-      elsif symbol.to_s.capitalize == symbol.to_s && Object.const_defined?(symbol)
-        Object.const_get(symbol)
       else
-        raise "cannot resolve #{symbol}"
+        begin
+          symbol.to_s.split('/').reduce(Object) do |c, p|
+            c.const_get(p)
+          end
+        rescue NameError => e
+          raise "cannot resolve #{symbol}"
+        end
       end
     end
 
@@ -123,8 +130,14 @@ module Risp
         *symbols, splat = symbols
         assigns[splat.name] = values.drop(symbols.size)
       end
-      arg_names = symbols.map(&:name)
-      assigns = assigns.merge(arg_names.zip(values).to_h)
+      symbols.zip(values) do |s, v|
+        if s.is_a?(Enumerable) && !s.is_a?(Risp::Symbol) && v.is_a?(Enumerable)
+          assigns.merge!(assign_args(s.drop(1), v))
+        else
+          assigns[s.name] = v
+        end
+      end
+      assigns
     end
   end
 end

@@ -6,7 +6,7 @@ describe Risp::Parser do
   let(:source) {
     <<-EOS
       (foo bar (baz 123 "xxx"))
-      42.5
+      -42.5
       (map somefunction [1 2 3])
       (reduce somefunction {:x 0} [1 2 3])
       \#{a set of stuff}
@@ -22,9 +22,9 @@ describe Risp::Parser do
       tokens = lexer.lex(source)
       parsed = parser.parse(tokens)
       expect(parsed[0]).to eq([sym(:foo), sym(:bar), [sym(:baz), 123, "xxx"]])
-      expect(parsed[1]).to eq(42.5)
-      expect(parsed[2]).to eq([sym(:map), sym(:somefunction), [sym(:quote), [[sym(:unquote), 1], [sym(:unquote), 2], [sym(:unquote), 3]]]])
-      expect(parsed[3]).to eq([sym(:reduce), sym(:somefunction), [sym(:"hash-map"), :x, 0], [sym(:quote), [[sym(:unquote), 1], [sym(:unquote), 2], [sym(:unquote), 3]]]])
+      expect(parsed[1]).to eq(-42.5)
+      expect(parsed[2]).to eq([sym(:map), sym(:somefunction), [sym(:vector), 1, 2, 3]])
+      expect(parsed[3]).to eq([sym(:reduce), sym(:somefunction), [sym(:"hash-map"), :x, 0], [sym(:vector), 1, 2, 3]])
       expect(parsed[4]).to eq([:set, :a, :set, :of, :stuff].map { |x| sym(x) })
     end
   end
