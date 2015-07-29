@@ -98,7 +98,12 @@ module Risp
           eval(macro.call(*args), binding, locals, macros)
         elsif first.is_a?(Risp::Method)
           receiver, *args = expr.drop(1).map { |x| eval(x, binding, locals, macros) }
-          receiver.send(first.name, *args)
+          if args.last.is_a?(Proc) && receiver.method(first.name).arity < args.size
+            *args, block = args
+            receiver.send(first.name, *args, &block)
+          else
+            receiver.send(first.name, *args)
+          end
         else
           fn, *args = expr.map { |x| eval(x, binding, locals, macros) }
           fn.call(*args)

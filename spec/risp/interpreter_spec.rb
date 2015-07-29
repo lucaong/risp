@@ -32,6 +32,7 @@ describe Risp::Interpreter do
     it 'interoperates with Ruby' do
       expect(i.eval '(.first [1 2 3])').to eq(1)
       expect(i.eval '(.new Set [1 2 3])').to eq(Set.new([1, 2, 3]))
+      expect(i.eval '(.reduce [1 2 3 4] +)').to eq(10)
     end
 
     it 'supports macros' do

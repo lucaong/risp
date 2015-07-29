@@ -17,8 +17,9 @@ module Risp
     rule(/#/)          { :POUND }
     rule(/'/)          { :QUOTE }
     rule(/~/)          { :UNQUOTE }
-    rule(/:[^'~\(\)\{\}\[\]\.#\s,]+/i) { |t| [:KEYWORD, t] }
-    rule(/[^:'~\(\)\{\}\[\]\.#\s,]+/i) { |t| [:SYMBOL, t] }
+    rule(/&/)          { :AMPERSAND }
+    rule(/:[^&'~\(\)\{\}\[\]\.#\s,]+/i) { |t| [:KEYWORD, t] }
+    rule(/[^:&'~\(\)\{\}\[\]\.#\s,]+/i) { |t| [:SYMBOL, t] }
     rule(/[\s,]/)     # ignore whitespaces and commas
   end
 end
