@@ -12,7 +12,7 @@ describe Risp::Interpreter do
           (- n 1))
 
         (defn fact [n]
-          (if (<= n 1)
+          (if (= n 1)
             1
             (let [m (fact (dec n))]
               (* n m))))
@@ -29,10 +29,21 @@ describe Risp::Interpreter do
       expect(i.eval lisp).to eq([1, 2, 3])
     end
 
+    it 'supports variable arguments' do
+      lisp = <<-LISP
+        (defn first-and-rest [first second &rest]
+          [first second rest])
+
+        (first-and-rest 0 1 2 3)
+      LISP
+      expect(i.eval lisp).to eq([0, 1, [2, 3]])
+    end
+
     it 'interoperates with Ruby' do
       expect(i.eval '(.first [1 2 3])').to eq(1)
       expect(i.eval '(.new Set [1 2 3])').to eq(Set.new([1, 2, 3]))
       expect(i.eval '(.reduce [1 2 3 4] +)').to eq(10)
+      expect(i.eval '(.reduce [1 2 3 4] :*)').to eq(24)
     end
 
     it 'supports macros' do
@@ -46,6 +57,24 @@ describe Risp::Interpreter do
         (sum 4 5)
       LISP
       expect(i.eval lisp).to eq(9)
+    end
+
+    it 'provides a threading-last macro' do
+      lisp = <<-LISP
+        (->> [1 2 3 4]
+          (map (fn [x] (+ x 3)))
+          (filter (fn [x] (.odd? x))))
+      LISP
+      expect(i.eval lisp).to eq([5, 7])
+    end
+
+    it 'provides a threading macro' do
+      lisp = <<-LISP
+        (-> [1 2 3 4]
+          (.map (fn [x] (+ x 3)))
+          (.select (fn [x] (.odd? x))))
+      LISP
+      expect(i.eval lisp).to eq([5, 7])
     end
   end
 end

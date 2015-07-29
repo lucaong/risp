@@ -12,25 +12,17 @@ module Risp
       },
       let: -> (elems, binding, locals, macros) {
         (_, assigns), body = elems
-        locals = assigns.each_slice(2).reduce(locals.dup) do |locals, (s, v)|
+        locals = assigns.map(&:last).each_slice(2).reduce(locals.dup) do |locals, (s, v)|
           locals[s.name] = eval(v, binding, locals, macros)
           locals
         end
         eval(body, binding, locals, macros)
       },
       fn: -> (elems, binding, locals, macros) {
-        (_, as), *body  = elems
-        arg_names = as.map(&:name)
+        (_, as), body = elems
+        as = as.map(&:last)
         -> (*args) do
-          locals = locals.merge(arg_names.zip(args).to_h)
-          body.map { |el| eval(el, binding, locals, macros) }.last
-        end
-      },
-      defn: -> (elems, binding, locals, macros) {
-        symbol, (_, as), body = elems
-        arg_names = as.map(&:name)
-        binding[symbol.name] = -> (*args) do
-          locals = locals.merge(arg_names.zip(args).to_h)
+          locals = locals.merge(assign_args(as, args))
           eval(body, binding, locals, macros)
         end
       },
@@ -50,41 +42,25 @@ module Risp
       },
       defmacro: -> (elems, binding, locals, macros) {
         symbol, (_, as), body = elems
-        arg_names = as.map(&:name)
+        as = as.map(&:last)
         macros[symbol.name] = -> (*args) do
-          locals = locals.merge(arg_names.zip(args).to_h)
+          locals = locals.merge(assign_args(as, args))
           eval(body, binding, locals, macros)
         end
       }
     }
 
     def initialize()
-      @binding = core
+      @binding = {}
       @macros  = {}
       @lexer   = Risp::Lexer.new
       @parser  = Risp::Parser.new
+      corelib  = File.read(File.expand_path('core.risp', File.dirname(__FILE__)))
+      eval(corelib)
     end
 
     def eval(code)
       parser.parse(lexer.lex(code)).map { |x| self.class.eval(x, binding, {}, macros) }.last
-    end
-
-    def core
-      arithmetics = %i[+ * / -].map do |op|
-        [op, -> (*xs) { xs.reduce(&op) }]
-      end
-
-      comparisons = %i[> < >= <= =].map do |op|
-        method = if op == :'=' then :== else op end
-        [op, -> (*xs) { xs.each_cons(2).all? { |x, y| x.send(method, y) } }]
-      end
-
-      data = [
-        [:set, -> (*xs) { Set.new(xs) }],
-        [:'hash-map', -> (*xs) { xs.each_slice(2).to_h }]
-      ]
-
-      (arithmetics + comparisons + data).to_h
     end
 
     def self.eval(expr, binding, locals, macros)
@@ -118,9 +94,9 @@ module Risp
 
     def self.unquote(expr, binding, locals, macros)
       if expr.is_a?(Array) || expr.is_a?(Hash) || expr.is_a?(Set)
-        first = expr.first
+        first, second = expr
         if first.is_a?(Risp::Symbol) && first.name == :unquote
-          eval(expr[1], binding, locals, macros)
+          eval(second, binding, locals, macros)
         else
           expr.map { |x| unquote(x, binding, locals, macros) }
         end
@@ -139,6 +115,16 @@ module Risp
       else
         raise "cannot resolve #{symbol}"
       end
+    end
+
+    def self.assign_args(symbols, values)
+      assigns = {}
+      if symbols.last.is_a?(Risp::Splat)
+        *symbols, splat = symbols
+        assigns[splat.name] = values.drop(symbols.size)
+      end
+      arg_names = symbols.map(&:name)
+      assigns = assigns.merge(arg_names.zip(values).to_h)
     end
   end
 end

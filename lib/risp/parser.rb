@@ -35,6 +35,9 @@ module Risp
       clause('DOT SYMBOL') do |_, name|
         Risp::Method.new(name.to_sym)
       end
+      clause('AMPERSAND SYMBOL') do |_, name|
+        Risp::Splat.new(name.to_sym)
+      end
     end
 
     production(:literal) do
@@ -54,7 +57,7 @@ module Risp
         k[1..-1].to_sym
       end
       clause('LSQBRACK expressions RSQBRACK') do |_, exprs, _|
-        [Risp::Symbol.new(:quote), exprs]
+        [Risp::Symbol.new(:quote), exprs.map { |x| [Risp::Symbol.new(:unquote), x] }]
       end
       clause('POUND LBRACE expressions RBRACE') do |_, _, exprs, _|
         [Risp::Symbol.new(:set)] + exprs

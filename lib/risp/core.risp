@@ -1,0 +1,61 @@
+(defmacro defn [name args body]
+  '(def ~name (fn ~args ~body)))
+
+(defmacro ->> [coll &forms]
+  (.reduce forms coll (fn [a f] (.push f a))))
+
+(defmacro -> [coll &forms]
+  (.reduce forms coll
+           (fn [a f]
+             (.concat '(~(first f) ~a) (rest f)))))
+
+(defn + [&xs]
+  (.reduce xs :+))
+
+(defn - [&xs]
+  (.reduce xs :-))
+
+(defn * [&xs]
+  (.reduce xs :*))
+
+(defn / [&xs]
+  (.reduce xs :/))
+
+(defn > [&xs]
+  (.all? (.each_cons xs 2) (fn [pair] (.> (.first pair) (.last pair)))))
+
+(defn >= [&xs]
+  (.all? (.each_cons xs 2) (fn [pair] (.>= (.first pair) (.last pair)))))
+
+(defn < [&xs]
+  (.all? (.each_cons xs 2) (fn [pair] (.< (.first pair) (.last pair)))))
+
+(defn <= [&xs]
+  (.all? (.each_cons xs 2) (fn [pair] (.<= (.first pair) (.last pair)))))
+
+(defn = [&xs]
+  (.all? (.each_cons xs 2) (fn [pair] (.== (.first pair) (.last pair)))))
+
+(defn set [&xs]
+  (.new Set xs))
+
+(defn hash-map [&xs]
+  (.to_h (.each_slice xs 2)))
+
+(defn filter [fn coll]
+  (.select coll fn))
+
+(defn map [fn coll]
+  (.map coll fn))
+
+(defn take [n coll]
+  (.take coll n))
+
+(defn drop [n coll]
+  (.drop coll n))
+
+(defn first [coll]
+  (.first coll))
+
+(defn rest [coll]
+  (drop 1 coll))
