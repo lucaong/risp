@@ -58,8 +58,8 @@ module Risp
       }
     }
 
-    def initialize(binding = global)
-      @binding = binding
+    def initialize()
+      @binding = core
       @macros  = {}
       @lexer   = Risp::Lexer.new
       @parser  = Risp::Parser.new
@@ -69,7 +69,7 @@ module Risp
       parser.parse(lexer.lex(code)).map { |x| self.class.eval(x, binding, {}, macros) }.last
     end
 
-    def global
+    def core
       arithmetics = %i[+ * / -].map do |op|
         [op, -> (*xs) { xs.reduce(&op) }]
       end
