@@ -12,12 +12,11 @@ module Risp
         binding[symbol.name] = eval(value, binding, locals, macros)
       },
       let: -> (elems, binding, locals, macros) {
-        (_, *assigns), body = elems
+        (_, *assigns), *forms = elems
         locals = assigns.each_slice(2).reduce(locals.dup) do |locals, (s, v)|
-          locals[s.name] = eval(v, binding, locals, macros)
-          locals
+          locals.merge assign_args([s], [eval(v, binding, locals, macros)])
         end
-        eval(body, binding, locals, macros)
+        forms.map { |form| eval(form, binding, locals, macros) }.last
       },
       fn: -> (elems, binding, locals, macros) {
         (_, *as), body = elems
