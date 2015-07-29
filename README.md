@@ -28,8 +28,7 @@ Or install it yourself as:
 (defn fact [n]
   (if (<= n 1)
     1
-    (let [m (fact (dec n))]
-      (* n m))))
+    (* n (fact (dec n)))))
 
 (fact 10)
 ```
