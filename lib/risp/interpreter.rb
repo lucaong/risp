@@ -67,7 +67,7 @@ module Risp
 
     def self.eval(expr, binding, locals, macros)
       case expr
-      when Array
+      when Hamster::List
         first = expr.first
         if special = first.is_a?(Risp::Symbol) && SPECIAL_FORMS[first.name]
           special.call(expr.drop(1), binding, locals, macros)
@@ -95,7 +95,7 @@ module Risp
     end
 
     def self.unquote(expr, binding, locals, macros)
-      if expr.is_a?(Array) || expr.is_a?(Hash) || expr.is_a?(Set)
+      if expr.is_a?(Hamster::List) || expr.is_a?(Hamster::Vector) || expr.is_a?(Hamster::Hash) || expr.is_a?(Hamster::Set)
         first, second = expr
         if first.is_a?(Risp::Symbol) && first.name == :unquote
           eval(second, binding, locals, macros)
@@ -124,19 +124,18 @@ module Risp
     end
 
     def self.assign_args(symbols, values)
-      assigns = {}
-      if symbols.last.is_a?(Risp::Splat)
-        *symbols, splat = symbols
-        assigns[splat.name] = values.drop(symbols.size)
-      end
-      symbols.zip(values) do |s, v|
-        if s.is_a?(Enumerable) && !s.is_a?(Risp::Symbol) && v.is_a?(Enumerable)
-          assigns.merge!(assign_args(s.drop(1), v))
+      symbols.each_with_index.reduce({}) do |a, (s, i)|
+        v = values[i]
+        if s.is_a?(Hamster::List) && v.is_a?(Enumerable)
+          a.merge(assign_args(s.drop(1), v))
+        elsif s.is_a?(Risp::Splat)
+          a[s.name] = values.drop(i)
+          a
         else
-          assigns[s.name] = v
+          a[s.name] = v
+          a
         end
       end
-      assigns
     end
   end
 end

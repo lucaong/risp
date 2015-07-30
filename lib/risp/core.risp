@@ -2,7 +2,7 @@
   '(def ~name (fn ~args ~body)))
 
 (defmacro ->> [coll &forms]
-  (.reduce forms coll (fn [a f] (.push f a))))
+  (.reduce forms coll (fn [a f] (.<< f a))))
 
 (defmacro -> [coll &forms]
   (.reduce forms coll
@@ -87,6 +87,9 @@
 
 (defn rest [coll]
   (drop 1 coll))
+
+(defn get [coll k default]
+  (.fetch coll k default))
 
 (defn println [&xs]
   (.puts (.new Object) (.join xs " ")))

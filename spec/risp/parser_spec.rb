@@ -22,11 +22,13 @@ describe Risp::Parser do
     it 'parses correctly' do
       tokens = lexer.lex(source)
       parsed = parser.parse(tokens)
-      expect(parsed[0]).to eq([sym(:foo), sym(:bar), [sym(:baz), 123, "xxx"]])
+      expect(parsed[0]).to eq(Hamster::List[sym(:foo), sym(:bar), Hamster::List[sym(:baz), 123, "xxx"]])
       expect(parsed[1]).to eq(-42.5)
-      expect(parsed[2]).to eq([sym(:map), sym(:somefunction), [sym(:vector), 1, 2, 3]])
-      expect(parsed[3]).to eq([sym(:reduce), sym(:somefunction), [sym(:"hash-map"), :x, 0], [sym(:vector), 1, 2, 3]])
-      expect(parsed[4]).to eq([:set, :a, :set, :of, :stuff].map { |x| sym(x) })
+      expect(parsed[2]).to eq(Hamster::List[sym(:map), sym(:somefunction), Hamster::List[sym(:vector), 1, 2, 3]])
+      expect(parsed[3]).to eq(Hamster::List[sym(:reduce), sym(:somefunction),
+                                            Hamster::List[sym(:"hash-map"), :x, 0],
+                                            Hamster::List[sym(:vector), 1, 2, 3]])
+      expect(parsed[4]).to eq(Hamster::List[:set, :a, :set, :of, :stuff].map { |x| sym(x) })
     end
   end
 end

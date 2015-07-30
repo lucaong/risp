@@ -12,16 +12,16 @@ module Risp
         list
       end
       clause('QUOTE expression') do |_, expr|
-        [Risp::Symbol.new(:quote), expr]
+        Hamster::List[Risp::Symbol.new(:quote), expr]
       end
       clause('UNQUOTE expression') do |_, expr|
-        [Risp::Symbol.new(:unquote), expr]
+        Hamster::List[Risp::Symbol.new(:unquote), expr]
       end
     end
 
     production(:list) do
       clause('LPAREN expressions RPAREN') do |_, elems, _|
-        elems
+        Hamster::List[*elems]
       end
     end
 
@@ -57,13 +57,13 @@ module Risp
         k[1..-1].to_sym
       end
       clause('LSQBRACK expressions RSQBRACK') do |_, exprs, _|
-        [Risp::Symbol.new(:vector)] + exprs
+        Hamster::List[Risp::Symbol.new(:vector), *exprs]
       end
       clause('POUND LBRACE expressions RBRACE') do |_, _, exprs, _|
-        [Risp::Symbol.new(:set)] + exprs
+        Hamster::List[Risp::Symbol.new(:set), *exprs]
       end
       clause('LBRACE expressions RBRACE') do |_, keyvals, _|
-        [Risp::Symbol.new(:"hash-map")] + keyvals
+        Hamster::List[Risp::Symbol.new(:"hash-map"), *keyvals]
       end
       clause('NIL') do |_|
         nil
