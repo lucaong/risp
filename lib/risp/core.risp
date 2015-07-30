@@ -70,11 +70,19 @@
 (defn ruby-hash [&xs]
   (.to_h (.each_slice xs 2)))
 
-(defn filter [fn coll]
-  (.select coll fn))
+(defn nil? [x]
+  (.nil? x))
 
-(defn map [fn coll]
-  (.map coll fn))
+(defn filter [f coll]
+  (.select coll f))
+
+(defn map [f coll]
+  (.map coll f))
+
+(defn reduce [f s coll]
+  (if (nil? coll)
+    (.reduce s f)
+    (.reduce coll s f)))
 
 (defn take [n coll]
   (.take coll n))
