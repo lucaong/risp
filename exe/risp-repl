@@ -26,5 +26,6 @@ while line = Readline.readline('> ', true)
     end
   rescue => e
     puts e.inspect
+    input = ''
   end
 end
