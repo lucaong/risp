@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "risp"
+
+risp = Risp::Interpreter.new
+risp.eval(File.new(ARGV[0], 'r').read)

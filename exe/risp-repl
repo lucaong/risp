@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "risp"
+require "readline"
+
+risp = Risp::Interpreter.new
+
+def complete?(input)
+  input.count('(') == input.count(')') &&
+    input.count('[') == input.count(']') &&
+    input.count('{') == input.count('}')
+end
+
+puts "The Risp v#{Risp::VERSION} REPL"
+
+input = ''
+while line = Readline.readline('> ', true)
+  begin
+    input << "\n#{line}"
+    if complete?(input) && input.gsub(/\s/, '').size > 0
+      puts "=> #{risp.eval(input)}"
+      input = ''
+    else
+      next
+    end
+  rescue => e
+    puts e.inspect
+  end
+end
