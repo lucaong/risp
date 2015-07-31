@@ -21,6 +21,16 @@ Or install it yourself as:
 
 ## Usage
 
+### Start a REPL
+
+Just run `risp-repl`
+
+### Execute a file
+
+`risp my_program.risp`
+
+### Inside Ruby
+
 Instantiate an interpreter and evaluate code:
 
 ```ruby
@@ -33,6 +43,8 @@ risp.eval <<-CODE
 (double 5)
 CODE
 ```
+
+## Syntax
 
 The LISP syntax is very similar to Clojure:
 
