@@ -19,7 +19,7 @@ while line = Readline.readline('> ', true)
   begin
     input << "\n#{line}"
     if complete?(input) && input.gsub(/\s/, '').size > 0
-      puts "=> #{risp.eval(input)}"
+      puts "=> #{risp.eval(input).inspect}"
       input = ''
     else
       next
