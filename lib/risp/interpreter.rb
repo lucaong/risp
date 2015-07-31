@@ -49,6 +49,11 @@ module Risp
       apply: -> (elems, binding, locals, macros) {
         fn, args = elems.map { |x| eval(x, binding, locals, macros) }
         fn.call(*args)
+      },
+      require: -> (elems, binding, locals, macros) {
+        elems.each do |lib|
+          require lib
+        end
       }
     }
 
