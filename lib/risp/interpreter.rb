@@ -102,7 +102,7 @@ module Risp
     end
 
     def self.unquote(expr, binding, locals, macros)
-      if expr.is_a?(Hamster::List) || expr.is_a?(Hamster::Vector) || expr.is_a?(Hamster::Hash) || expr.is_a?(Hamster::Set)
+      if expr.is_a?(Enumerable) && !expr.is_a?(Risp::Symbol)
         first, second = expr
         if first.is_a?(Risp::Symbol) && first.name == :unquote
           eval(second, binding, locals, macros)
