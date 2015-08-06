@@ -12,14 +12,14 @@ module Risp
         binding[symbol.name] = eval(value, binding, locals, macros)
       },
       let: -> (elems, binding, locals, macros) {
-        (_, *assigns), *forms = elems
+        (*assigns), *forms = elems
         locals = assigns.each_slice(2).reduce(locals.dup) do |locals, (s, v)|
           locals.merge assign_args([s], [eval(v, binding, locals, macros)])
         end
         forms.map { |form| eval(form, binding, locals, macros) }.last
       },
       fn: -> (elems, binding, locals, macros) {
-        (_, *as), body = elems
+        (*as), body = elems
         -> (*args) do
           locals = locals.merge(assign_args(as, args))
           eval(body, binding, locals, macros)
@@ -40,7 +40,7 @@ module Risp
         unquote(elems.first, binding, locals, macros)
       },
       defmacro: -> (elems, binding, locals, macros) {
-        symbol, (_, *as), body = elems
+        symbol, (*as), body = elems
         macros[symbol.name] = -> (*args) do
           locals = locals.merge(assign_args(as, args))
           eval(body, binding, locals, macros)
@@ -94,6 +94,8 @@ module Risp
       when Risp::Symbol
         symbol = expr.name
         resolve(symbol, binding, locals, macros)
+      when Enumerable
+        expr.map { |x| eval(x, binding, locals, macros) }
       else
         expr
       end
@@ -131,8 +133,8 @@ module Risp
     def self.assign_args(symbols, values)
       symbols.each_with_index.reduce({}) do |a, (s, i)|
         v = values[i]
-        if s.is_a?(Hamster::List) && v.is_a?(Enumerable)
-          a.merge(assign_args(s.drop(1), v))
+        if s.is_a?(Hamster::Vector) && v.is_a?(Enumerable)
+          a.merge(assign_args(s, v))
         elsif s.is_a?(Risp::Splat)
           a[s.name] = values.drop(i)
           a

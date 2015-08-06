@@ -57,13 +57,13 @@ module Risp
         k[1..-1].to_sym
       end
       clause('LSQBRACK expressions RSQBRACK') do |_, exprs, _|
-        Hamster::List[Risp::Symbol.new(:vector), *exprs]
+        Hamster::Vector.new(exprs)
       end
       clause('POUND LBRACE expressions RBRACE') do |_, _, exprs, _|
-        Hamster::List[Risp::Symbol.new(:set), *exprs]
+        Hamster::Set.new(exprs)
       end
       clause('LBRACE expressions RBRACE') do |_, keyvals, _|
-        Hamster::List[Risp::Symbol.new(:"hash-map"), *keyvals]
+        Hamster::Hash.new(keyvals.each_slice(2).to_h)
       end
       clause('NIL') do |_|
         nil

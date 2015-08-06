@@ -24,11 +24,10 @@ describe Risp::Parser do
       parsed = parser.parse(tokens)
       expect(parsed[0]).to eq(Hamster::List[sym(:foo), sym(:bar), Hamster::List[sym(:baz), 123, "xxx"]])
       expect(parsed[1]).to eq(-42.5)
-      expect(parsed[2]).to eq(Hamster::List[sym(:map), sym(:somefunction), Hamster::List[sym(:vector), 1, 2, 3]])
+      expect(parsed[2]).to eq(Hamster::List[sym(:map), sym(:somefunction), Hamster::Vector[1, 2, 3]])
       expect(parsed[3]).to eq(Hamster::List[sym(:reduce), sym(:somefunction),
-                                            Hamster::List[sym(:"hash-map"), :x, 0],
-                                            Hamster::List[sym(:vector), 1, 2, 3]])
-      expect(parsed[4]).to eq(Hamster::List[:set, :a, :set, :of, :stuff].map { |x| sym(x) })
+                                            Hamster::Hash[x: 0], Hamster::Vector[1, 2, 3]])
+      expect(parsed[4]).to eq(Hamster::Set[:a, :set, :of, :stuff].map { |x| sym(x) })
     end
   end
 end
