@@ -55,6 +55,16 @@ describe Risp::Interpreter do
         (swap-pairs [1 2] [3 4])
       LISP
       expect(i.eval lisp).to eq(Hamster.from([[1, 3], [2, 4]]))
+
+      lisp = <<-LISP
+        (defn swap-pairs [x y]
+          (let [[a b] x
+                [c d] y]
+            [[a c] [b d]]))
+
+        (swap-pairs [1 2] [3 4])
+      LISP
+      expect(i.eval lisp).to eq(Hamster.from([[1, 3], [2, 4]]))
     end
 
     it 'interoperates with Ruby' do
@@ -62,6 +72,8 @@ describe Risp::Interpreter do
       expect(i.eval '(.new Set [1 2 3])').to eq(Set.new([1, 2, 3]))
       expect(i.eval '(.reduce [1 2 3 4] +)').to eq(10)
       expect(i.eval '(.reduce [1 2 3 4] :*)').to eq(24)
+      expect(i.eval '(.sqrt Math 4)').to eq(2)
+      expect(i.eval '(.new Hamster/Set [1 2 3])').to eq(Hamster::Set.new([1, 2, 3]))
     end
 
     it 'supports macros' do
@@ -86,7 +98,7 @@ describe Risp::Interpreter do
       expect(i.eval lisp).to eq([5, 7])
     end
 
-    it 'provides a threading macro' do
+    it 'provides a threading-first macro' do
       lisp = <<-LISP
         (-> [1 2 3 4]
           (.map (fn [x] (+ x 3)))
