@@ -1,7 +1,7 @@
 # Risp
 
-`Risp` is a LISP implementation written in Ruby. The syntax
-is reminescent of Clojure, and it support calling Ruby methods.
+`Risp` is a LISP implementation written in Ruby. The syntax is reminescent of
+Clojure, and it interoperates with Ruby.
 
 
 ## Why?
@@ -10,9 +10,9 @@ Why not? :P
 
 Mostly I did this to learn a bit more about programming language design. Or
 maybe I was bored. And also I really like LISPs and I like the idea of writing
-LISP leveraging on the Ruby ecosystem. But still this is mostly a cool
-experiment, so if you use it you cannot blame me if it eats your laundry or
-messes up your kitchen.
+LISP leveraging on the Ruby ecosystem. But still this is mostly an experiment,
+so if you use it you cannot blame me if it ends up eating your laundry or
+setting your kitchen on fire.
 
 
 ## Installation
@@ -89,6 +89,7 @@ The LISP syntax is very similar to Clojure:
 (swap-pairs [1 2] [3 4]) ; => [[1 3] [2 4]]
 ```
 
+
 ## Macro support
 
 Macros, quoting and unquoting are supported:
@@ -103,7 +104,8 @@ Macros, quoting and unquoting are supported:
 (sum 4 5)
 ```
 
-### Ruby interoperability
+
+## Ruby interoperability
 
 ```lisp
 ; Ruby methods can be called the same way as LISP functions, just prepend a
