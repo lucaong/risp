@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'risp/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "risp"
+  spec.name          = "risp-lang"
   spec.version       = Risp::VERSION
   spec.authors       = ["Luca Ongaro"]
   spec.email         = ["lukeongaro@gmail.com"]

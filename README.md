@@ -20,7 +20,7 @@ setting your kitchen on fire.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'risp'
+gem 'risp-lang'
 ```
 
 And then execute:
