@@ -1,7 +1,19 @@
 # Risp
 
-`Risp` is a LISP implementation written in Ruby (because why not?). The syntax
+`Risp` is a LISP implementation written in Ruby. The syntax
 is reminescent of Clojure, and it support calling Ruby methods.
+
+
+## Why?
+
+Why not? :P
+
+Mostly I did this to learn a bit more about programming language design. Or
+maybe I was bored. And also I really like LISPs and I like the idea of writing
+LISP leveraging on the Ruby ecosystem. But still this is mostly a cool
+experiment, so if you use it you cannot blame me if it eats your laundry or
+messes up your kitchen.
+
 
 ## Installation
 
@@ -19,6 +31,7 @@ Or install it yourself as:
 
     $ gem install risp
 
+
 ## Usage
 
 ### Start a REPL
@@ -34,6 +47,7 @@ Just run `risp-repl`
 Instantiate an interpreter and evaluate code:
 
 ```ruby
+require 'risp'
 risp = Risp::Interpreter.new
 
 risp.eval <<-CODE
@@ -43,6 +57,7 @@ risp.eval <<-CODE
 (double 5)
 CODE
 ```
+
 
 ## Syntax
 
@@ -90,16 +105,24 @@ Macros, quoting and unquoting are supported:
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake rspec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies. Then, run
+`rake rspec` to run the tests. You can also run `bin/console` for an interactive
+prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`. To
+release a new version, update the version number in `version.rb`, and then run
+`bundle exec rake release`, which will create a git tag for the version, push
+git commits and tags, and push the `.gem` file to
+[rubygems.org](https://rubygems.org).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/risp.
+Bug reports and pull requests are welcome on GitHub at
+https://github.com/lucaong/risp.
 
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+The gem is available as open source under the terms of the [MIT
+License](http://opensource.org/licenses/MIT).
 
