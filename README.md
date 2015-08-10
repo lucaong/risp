@@ -17,19 +17,7 @@ setting your kitchen on fire.
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'risp-lang'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install risp
+    $ gem install risp-lang
 
 
 ## Usage
