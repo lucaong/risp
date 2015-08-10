@@ -103,6 +103,23 @@ Macros, quoting and unquoting are supported:
 (sum 4 5)
 ```
 
+### Ruby interoperability
+
+```lisp
+; Ruby methods can be called the same way as LISP functions, just prepend a
+; dot to the method name, pass the receiver as the first argument, followed
+; by any other argument:
+
+(.join ["highway" "to" "the" "danger" "zone"] " ")
+
+; Ruby constants, modules and classes are available, just use Foo/Bar instead
+; of Foo::Bar:
+
+(defn circle-area [radius]
+  (* 2 Math/PI radius))
+```
+
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run
