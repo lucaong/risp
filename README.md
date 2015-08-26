@@ -106,7 +106,7 @@ Macros, quoting and unquoting are supported:
 ; of Foo::Bar:
 
 (defn circle-area [radius]
-  (* 2 Math/PI radius))
+  (* Math/PI radius radius))
 ```
 
 
